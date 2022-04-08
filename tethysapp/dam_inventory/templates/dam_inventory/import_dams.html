@@ -1,0 +1,20 @@
+{% extends "dam_inventory/base.html" %}
+{% load tethys_gizmos %}
+
+{% block app_content %}
+  <h1>Import Dams</h1>
+  <p>Select a dam list file to import. The file should be a csv with columns: dam_id, name, latitude, longitude, elevation, and agency.</p>
+  <form id="import-dams-form" method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    <div class="form-group{% if dams_file_error %} has-error{% endif %}">
+      <label class="control-label">Dams File</label>
+      <input type="file" name="dams-file" class="form-control form-control-lg">
+      {% if dams_file_error %}<p class="help-block">{{ dams_file_error }}</p>{% endif %}
+    </div>
+  </form>
+{% endblock %}
+
+{% block app_actions %}
+  {% gizmo cancel_button %}
+  {% gizmo add_button %}
+{% endblock %}

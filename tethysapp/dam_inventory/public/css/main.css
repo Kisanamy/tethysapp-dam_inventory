@@ -1,0 +1,47 @@
+/* .menu_items{
+    background-color: #ffffff;
+    color: #fff;
+    padding: 10px;
+    font-size: 28px;
+    border-top: #3f3f3f;
+    border-left: #3f3f3f;
+    border-right: #3f3f3f;
+    border-bottom: #9e9e9e;
+} */
+
+/* Color gray un hover menu_items */
+.menu_items:hover{
+    background-color: #464646;
+    /* color: #3f3f3f; */
+}
+
+.title{
+    padding-top: 10px;
+    color: #ffffff;
+    font-size: 22px;
+    padding-left: 10px;
+}
+
+ul.mainMenu{
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    height: 100%;
+    background-color: #2e2e2e;
+  }
+  
+  /* And so on... */
+  .mainMenu li a {
+    display: block;
+    color: rgb(255, 255, 255);
+    /* text-align: center; */
+    padding: 14px 16px;
+    text-decoration: none;
+    font-size: 16px;
+  }
+
+  .menucolor{
+    background-color: #2e2e2e;
+  }
+
