@@ -33,11 +33,14 @@ window.onload = function(){
 
     var currentLayerControl = new ol.control.Control({element: document.getElementById("currentLayer")});
 
+    var select_workspace = new ol.control.Control({element: document.getElementById("select_workspace")});
+
     var controlsT = new ol.control.Control({
         element: document.getElementById("controlsT")
     });
     ol_map.addControl(currentLayerControl);
     ol_map.addControl(controlsT);
+    ol_map.addControl(select_workspace);
 
     app_content_wrapper.classList.remove('show-nav');
     app_content_wrapper.classList.add('with-transition');
@@ -78,13 +81,16 @@ function selectLayer(layer) {
 }
 //#endregion
 
+function directLayer(){
+    updaterange(document.getElementById('layer_text').value);
+}
+
 //#region Avanzar capa
 function nextLayer(){
     var currentLayer = document.getElementById("currentLayer").innerHTML.replace("Current Layer: ","");
     options.forEach(function(layer,index,array) {
         if (layer[1] == currentLayer){
-            rangeInput.max = options.length-1;
-            updaterange(index == options.length-1 ? 0 : index+1);
+                updaterange(index == options.length-1 ? 0 : index+1);
         }
     })
 }
@@ -95,7 +101,6 @@ function prevLayer(){
     var currentLayer = document.getElementById("currentLayer").innerHTML.replace("Current Layer: ","");
     options.forEach(function(layer,index,array) {
         if (layer[1] == currentLayer){
-            rangeInput.max = options.length-1;
             updaterange(index == 0 ? options.length-1 : index-1);
         }
     })
@@ -110,13 +115,18 @@ function autoLayer(){
 
 async function play(){
     for (var i = 0; i < options.length; i++) {
-        await new Promise(r => setTimeout(r, 1000));
+        await new Promise(r => setTimeout(r, 2000));
+        if(rangeInput.value == length){
+            nextLayer();
+            break;
+        }
         if (isPlaying){
             nextLayer();
         }
         else{
             break;
         }
+        
     }
 }
 //#endregion
@@ -134,13 +144,11 @@ let end = parseFloat(rangeInput.max);
 let step = parseFloat(rangeInput.step);
 
 var length = options.length-1;
+rangeInput.max = length;
 
 for(let i=start;i<=end;i+=step){
   rangeValue.innerHTML += '<div>'+i + " / " + length +'</div>';
 }
-rangeInput.addEventListener("input",function(){
-    updaterange(this.value);
-});
 
 function updaterange(value){
   selectLayer(options[value][1]);
@@ -148,4 +156,9 @@ function updaterange(value){
   let top = parseFloat(rangeInput.value)/step * -40;
   rangeValue.style.marginTop = top+"px";
 }
+
+rangeInput.addEventListener('change', function(){
+    updaterange(this.value);
+});
+
 //#endregion

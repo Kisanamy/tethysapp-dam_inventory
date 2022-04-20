@@ -14,7 +14,9 @@ import os
 WORKSPACE = 'geoserver_app'
 GEOSERVER_URI = 'http://localhost:8000/apps/geoserver-app'
 selected_layer = ''
+selected_workspace = ''
 options = []
+workspaces = []
 @app_workspace
 @login_required()
 def home(request, app_workspace):
@@ -24,12 +26,16 @@ def home(request, app_workspace):
     geoserver_engine = app.get_spatial_dataset_service(name='main_geoserver', as_engine=True)
 
     options = []
-
     response = geoserver_engine.list_layers(with_properties=False)
+    responseWorkspaces = geoserver_engine.list_workspaces()
 
     if response['success']:
         for layer in response['result']:
             options.append((layer.title(), layer))
+    
+    if responseWorkspaces['success']:
+        for workspace in responseWorkspaces['result']:
+            workspaces.append(workspace)
 
     select_options = SelectInput(
         display_text='Choose Layer',
@@ -38,28 +44,37 @@ def home(request, app_workspace):
         options=options
     )
 
-    map_layers = []
+    select_workspaces = SelectInput(
+        display_text='Choose Workspace',
+        name='workspace',
+        multiple=False,
+        options=workspaces
+    )
 
-    selected_layer = options[0][1]
-
-    if request.POST and 'layer' in request.POST:
+    if request.POST and 'select_workspace' in request.POST:
         selected_layer = request.POST['layer']
         legend_title = selected_layer.title()
 
-        geoserver_layer = MVLayer(
-            source='ImageWMS',
-            options={
-                'url': 'http://localhost:8080/geoserver/wms',
-                'params': {'LAYERS': selected_layer},
-                'serverType': 'geoserver'
-            },
-            legend_title=legend_title,
-            legend_extent=[-114, 36.5, -109, 42.5],
-            legend_classes=[
-                MVLegendClass('polygon', 'County', fill='#999999'),
-        ])
+        # geoserver_layer = MVLayer(
+        #     source='ImageWMS',
+        #     options={
+        #         'url': 'http://localhost:8080/geoserver/wms',
+        #         'params': {'LAYERS': selected_layer},
+        #         'serverType': 'geoserver'
+        #     },
+        #     legend_title=legend_title,
+        #     legend_extent=[-114, 36.5, -109, 42.5],
+        #     legend_classes=[
+        #         MVLegendClass('polygon', 'County', fill='#999999'),
+        # ])
 
-        map_layers.append(geoserver_layer)
+        # map_layers.append(geoserver_layer)
+
+    map_layers = []
+
+    selected_layer = options[0][1]
+    selected_workspace = workspaces[0][1]
+
 
     # Define base map options
     esri_layer_names = [
@@ -100,7 +115,6 @@ def home(request, app_workspace):
             'ZoomSlider',
             'Rotate',
             'FullScreen',
-            {'MousePosition': {'projection': 'EPSG:4326'}},
             {'ZoomToExtent': {'projection': 'EPSG:4326', 'extent': [-100, 25, -65, 55]}}
         ],
         legend=False,
@@ -134,7 +148,8 @@ def home(request, app_workspace):
         name = 'pause_auto_layer_button',
         icon = 'glyphicon glyphicon-pause',
         attributes = {
-            'onclick':'pauseAutoLayer()'
+            'onclick':'pauseAutoLayer()',
+            'class':'btn btn-default'
         }
     )
 
@@ -145,8 +160,11 @@ def home(request, app_workspace):
         'auto_layer_button': auto_layer_button,
         'pause_auto_layer_button': pause_auto_layer_button,
         'options': options,
+        'workspaces': workspaces,
         'select_options': select_options,
+        'select_workspaces': select_workspaces,
         'selected_layer': selected_layer,
+        'selected_workspace': selected_workspace,
         'can_add_dams': has_permission(request, 'add_dams')
     }
 

@@ -11,36 +11,59 @@
   <h6 id="currentLayer" class="ol-unselectable ol-control row controls" style=" z-index: 1000;
   top: 0%;
   right: 7.6em; width: 20%; ">Current Layer: {{ selected_layer }}</h6>
-  
+  <div id="select_workspace" class="ol-unselectable ol-control" style="width: 11%; height: 10%; top: 3em; right: 1em;">
+    <select  class="ol-unselectable ol-control">
+      <option value="">Select workspace</option>
+      {% for workspace in workspaces %}
+        <option value="{{ title }}">{{ workspace }}</option>
+      {% endfor %}
+    </select>
+    <br>  
+    <button id="add_workspace" class="ol-unselectable ol-control" style="width: 25%; margin-top: 2%;">Send</button>
+  </div>
   <div id="popup"></div>
 </form>
   {% gizmo dam_inventory_map %}
-  <div id="map" class="map" >
     <div class="ol-unselectable ol-control row controls" style=" z-index: 1000;
     bottom: 2%;
     left: 1.6em; width: 99%; height: 38px;" id="controlsT">
-    <div class="col-md-1" style="width: 45px;">
-      {% gizmo prev_layer_button %}
-    </div>
-    <div class="col-md-1" style="width: 45px;">
-      {% gizmo next_layer_button %}
-    </div>
-    <div class="col-md-1" style="width: 45px;">
-      {% gizmo auto_layer_button %}
-    </div>
-    <div class="col-md-1" style="width: 45px;">
-      {% gizmo pause_auto_layer_button %}
-    </div>
-    <div class="col-md-9">
-      <div class="range-input">
-        <input type="range" id="range_layer" title="Hello from speech bubble!" min='0' max = "100" value="0" step="1">
-        <div class="value">
-             <div></div>
-         </div>
+      <div class="col-md-1" style="width: 45px;">
+        <button type="button" class="ol-unselectable ol-control" style="width: 32px; height: 32px;" onclick="prevLayer()">
+          <span class="glyphicon glyphicon-chevron-left"></span>
+        </button>
       </div>
+      <div class="col-md-1" style="width: 45px;">
+        <button type="button" class="ol-unselectable ol-control" style="width: 32px; height: 32px;" onclick="nextLayer()">
+          <span class="glyphicon glyphicon-chevron-right"></span>
+        </button>
       </div>
+      <div class="col-md-1" style="width: 45px;">
+        <button type="button" class="ol-unselectable ol-control" style="width: 32px; height: 32px;" onclick="autoLayer()">
+          <span class="glyphicon glyphicon-play"></span>
+        </button>
       </div>
-  </div>
+      <div class="col-md-1" style="width: 45px;">
+        <button type="button" class="ol-unselectable ol-control" style="width: 32px; height: 32px;" onclick="pauseAutoLayer()">
+          <span class="glyphicon glyphicon-pause"></span>
+        </button>
+      </div>
+      <div class="col-md-9">
+        <div class="range-input">
+          <input type="range" id="range_layer" title="Hello from speech bubble!" min='0' max = "100" value="0" step="1">
+          <div class="value">
+              <div></div>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-2" style="width: 55px;">
+        <input type="text" id="layer_text" placeholder="Go To" class="ol-unselectable ol-control" style="width: 55px; height: 35px; text-align: center; margin-left: -25px;">
+      </div>
+      <div class="col-md-1" style="width: 45px;">
+        <button type="button" class="ol-unselectable ol-control" id="go_to_layer" style="width: 32px; height: 32px; margin-left: -20px;" onclick="directLayer()">
+          <span class="glyphicon glyphicon-arrow-right"></span>
+        </button>
+      </div>
+    </div>
   {{ options|json_script:"options"}}
   {{ selected_layer|json_script:"selected-layer"}}
 {% endblock %}
